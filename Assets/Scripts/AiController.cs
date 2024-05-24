@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public enum IAState
@@ -18,6 +19,8 @@ public class AiController : MonoBehaviour
     private IAState _state = IAState.None;
     public bool PlayerNear = false;
     [SerializeField] private Animator _animator;
+    [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private GameObject[] _waypoint;
 
     private void Update()
     {
@@ -27,6 +30,8 @@ public class AiController : MonoBehaviour
 
     private void Behaviour()
     {
+        _agent = GetComponent<NavMeshAgent>();
+
         switch (_state)
         {
             case IAState.None:
@@ -38,8 +43,9 @@ public class AiController : MonoBehaviour
                 //
                 break;
             case IAState.Walk:
-                //
-                //
+
+                Walk();
+
                 break;
             case IAState.Looking:
                 //
@@ -54,6 +60,23 @@ public class AiController : MonoBehaviour
                 //
                 break;
         }
+    }
+
+    
+    IEnumerator WaypointRoute()
+    {
+        Walk();
+        yield return new WaitForSeconds(3);
+    }
+
+
+    private void Walk()
+    {
+        int index = 0;
+
+        StartCoroutine(WaypointRoute());
+
+        _agent.SetDestination(_waypoint[index].transform.position);
     }
 
     private void CheckTransition()
