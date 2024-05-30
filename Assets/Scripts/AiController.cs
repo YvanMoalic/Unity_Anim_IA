@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.Rendering.DebugUI;
 
 
 public enum IAState
@@ -16,17 +19,43 @@ public enum IAState
 
 public class AiController : MonoBehaviour
 {
-    private IAState _state = IAState.None;
-    public bool PlayerNear = false;
+    private IAState _state = IAState.Walk;
+    public bool _playerNear = false;
+    public bool _playerSeen = false;
     [SerializeField] private Animator _animator;
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private GameObject[] _waypoint;
+    [SerializeField] private int WaypointIndex = 0;
+    [SerializeField] private bool walkTrigger = false;
+    public GameObject _player;
+
+
+    private void Start()
+    {
+        StartCoroutine(CalculateSpeed());
+    }
 
     private void Update()
     {
         CheckTransition();
-        Behaviour();
+        Behaviour();        
     }
+
+
+    IEnumerator CalculateSpeed()
+    {
+        bool isPlaying = true;
+
+        while (isPlaying)
+        {
+            Vector3 lastPosition = transform.position;
+            yield return new WaitForFixedUpdate();
+            _animator.SetFloat("Speed", Mathf.RoundToInt(Vector3.Distance(transform.position, lastPosition) / Time.fixedDeltaTime));
+        }
+        
+    
+    }
+
 
     private void Behaviour()
     {
@@ -44,7 +73,7 @@ public class AiController : MonoBehaviour
                 break;
             case IAState.Walk:
 
-                Walk();
+                StartCoroutine(WaypointRoute());
 
                 break;
             case IAState.Looking:
@@ -52,8 +81,10 @@ public class AiController : MonoBehaviour
                 //
                 break;
             case IAState.PlayerSeen:
-                //
-                //
+
+                _playerSeen = true;
+                PlayerSeen();
+                
                 break;
             case IAState.PlayerNear:
                 //
@@ -65,18 +96,46 @@ public class AiController : MonoBehaviour
     
     IEnumerator WaypointRoute()
     {
-        Walk();
-        yield return new WaitForSeconds(3);
+
+        if (!walkTrigger)
+        {
+            walkTrigger = true;
+            while (_state == IAState.Walk)
+            {
+                Walk();
+                yield return new WaitForSeconds(8);
+            }
+        }              
+    }
+
+    private void Walk()
+    {        
+
+        if(WaypointIndex == 0)
+        {
+            _agent.SetDestination(_waypoint[WaypointIndex].transform.position);
+            WaypointIndex = 1;
+        }
+        else
+        {
+            _agent.SetDestination(_waypoint[WaypointIndex].transform.position);
+            WaypointIndex = 0;
+        }
+
     }
 
 
-    private void Walk()
+    private void PlayerSeen()
     {
-        int index = 0;
+        _agent.SetDestination(_player.transform.position);        
+    }
 
-        StartCoroutine(WaypointRoute());
-
-        _agent.SetDestination(_waypoint[index].transform.position);
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _playerSeen = true;
+        }
     }
 
     private void CheckTransition()
@@ -86,53 +145,63 @@ public class AiController : MonoBehaviour
             case IAState.None:
                 break;
 
-            case IAState.Idle:
+            case IAState.Idle: //IDLE
 
-                if (PlayerNear)        // --- NEAR ---
+                if (_playerNear)        // --- NEAR ---
                 {
                     _state = IAState.PlayerNear;
                     _animator.SetBool("Near", true);
                 }
-
-                break;
-
-            case IAState.Walk:
-
-                if (PlayerNear)        // --- NEAR ---
+                else if (_playerSeen)
                 {
                     _state = IAState.PlayerNear;
-                    _animator.SetBool("Near", true);
+                    _animator.SetBool("Seen", true);
                 }
 
                 break;
 
-            case IAState.Looking:
+            case IAState.Walk: //WALK
 
-                if (PlayerNear)        // --- NEAR ---
+                
+                if (_playerSeen)
                 {
-                    _state = IAState.PlayerNear;
-                    _animator.SetBool("Near", true);
+                    _state = IAState.PlayerSeen;
+                    _animator.SetBool("Seen", true);
                 }
 
                 break;
 
-            case IAState.PlayerSeen:
+            case IAState.Looking: //LOOKING
 
-                if (PlayerNear)        // --- NEAR ---
+                if (_playerNear)        // --- NEAR ---
                 {
                     _state = IAState.PlayerNear;
                     _animator.SetBool("Near", true);
                 }
+                else if (_playerSeen)
+                {
+                    _state = IAState.PlayerNear;
+                    _animator.SetBool("Seen", true);
+                }
 
                 break;
 
-            case IAState.PlayerNear:
+            case IAState.PlayerSeen: //SEEN
+                _animator.SetBool("Seen", true);
+                break;
 
-                if (!PlayerNear)        // --- PLUS NEAR ---
+            case IAState.PlayerNear: //NEAR
+
+                if (!_playerNear)        // --- PLUS NEAR ---
                 {
                     _state = IAState.Walk;
+                    _animator.SetBool("Near", false);
                 }
-
+                else if (_playerSeen)
+                {
+                    _state = IAState.PlayerNear;
+                    _animator.SetBool("Seen", true);
+                }
                 break;
         }
     }

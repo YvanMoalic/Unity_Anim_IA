@@ -29,16 +29,16 @@ public class IAPerception : MonoBehaviour
         {
             if (hit.collider.gameObject.GetComponent<PlayerController>())
             {
-                _pawn.GetComponentInChildren<AiController>().PlayerNear = true;
+                _pawn.GetComponentInChildren<AiController>()._playerNear = true;
             }
             else
             {
-                _pawn.GetComponentInChildren<AiController>().PlayerNear = false;
+                _pawn.GetComponentInChildren<AiController>()._playerNear = false;
             }
         }
         else
         {
-            _pawn.GetComponentInChildren<AiController>().PlayerNear = false;
+            _pawn.GetComponentInChildren<AiController>()._playerNear = false;
         }
     }
 }

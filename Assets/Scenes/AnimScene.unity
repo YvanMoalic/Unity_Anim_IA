@@ -774,22 +774,22 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
@@ -799,7 +799,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
         type: 3}
@@ -841,6 +841,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1163313187}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1163313192}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1163313194}
   m_SourcePrefab: {fileID: 100100000, guid: 20c4bf9e7f79d95428bc871c10b6a55a, type: 3}
 --- !u!1 &1163313185 stripped
 GameObject:
@@ -920,18 +928,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21421eff566b4ba49988a94d537d7da9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerNear: 0
+  _playerNear: 0
+  _playerSeen: 0
   _animator: {fileID: 1163313190}
   _agent: {fileID: 0}
   _waypoint:
-  - {fileID: 956775597}
   - {fileID: 66816468}
+  - {fileID: 956775597}
+  WaypointIndex: 0
+  walkTrigger: 0
+  _player: {fileID: 1557806650}
 --- !u!95 &1163313190 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 20c4bf9e7f79d95428bc871c10b6a55a,
     type: 3}
   m_PrefabInstance: {fileID: 1163313183}
   m_PrefabAsset: {fileID: 0}
+--- !u!54 &1163313192
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163313185}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &1163313194
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163313185}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.1721354, y: 1.196837, z: 5.3372397}
+  m_Center: {x: 0.0767107, y: 0.64647114, z: 2.9042573}
 --- !u!1 &1527429146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1050,8 +1110,8 @@ GameObject:
   - component: {fileID: 1557806653}
   - component: {fileID: 1557806652}
   m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
+  m_Name: Player
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1065,7 +1125,7 @@ Transform:
   m_GameObject: {fileID: 1557806650}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.51, z: 0}
+  m_LocalPosition: {x: 0, y: -0.43, z: 4.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
